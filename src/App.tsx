@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 import Header from './components/Header'
 import Produtos from './containers/Produtos'
-
 import { GlobalStyle } from './styles'
+
+import { addToCart } from './features/cart/cartSlice'
+import { RootState } from './app/store'
 
 export type Produto = {
   id: number
@@ -13,8 +16,10 @@ export type Produto = {
 
 function App() {
   const [produtos, setProdutos] = useState<Produto[]>([])
-  const [carrinho, setCarrinho] = useState<Produto[]>([])
   const [favoritos, setFavoritos] = useState<Produto[]>([])
+
+  const carrinho = useSelector((state: RootState) => state.cart.items)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     fetch('https://api-ebac.vercel.app/api/ebac_sports')
@@ -26,7 +31,7 @@ function App() {
     if (carrinho.find((p) => p.id === produto.id)) {
       alert('Item já adicionado')
     } else {
-      setCarrinho([...carrinho, produto])
+      dispatch(addToCart(produto))
     }
   }
 
